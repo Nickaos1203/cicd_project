@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  push:
+    branches: [main,develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  lint:
+    name: Lint & Format
+    run-on: ubuntu-latest
+    steps:
+      - name: Installer ruff
+        run: uv pip install ruff
+      
+      - name: Installer les dépendances
+        run: uv sync
+
+      - name: Exécuter ruff check
+        run: uv run ruff check .
+
+      - name: Vérifier le formatage
+        run: uv run ruff format --check
+
+  typecheck:
+    name: Vérification des types
+    runs-on: ubuntu-latest
+    steps:
+      - name: Installer mypy
+        run: uv pip install mypy
+      
+      - name: Installer les dépendances
+        run: uv sync
+
+      - name: Exécuter mypy
+        run: uv run mypy app/
+
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Installer Bandit
+        run: uv pip install bandit
+
+      - name: Installer les dépendances
+        run: uv sync
+
+      - name: Bandit (static analysis)
+        run: uv run bandit -r app/
+
+      - name: Safety (check dependencies vulnerabilities)
+        run: uv run safety check
+  
+  tests:
+    runs-on: ubuntu-latest
+    services:
+      image: postgres:15
+      env:
+        POSTGRES_PASSWORD: postgres
+        POSTGRES_DB: test_db
+      options: >-
+        --health-cmd pg_isready
+        --health-interval 10s
+        --health-timeout 5s
+        --health-retries 5
+      ports:
+        - 5432:5432
+    
+    steps:
+      - name: installation de pytest
+        run: uv pip install pytest
+
+      - name: installation des dépendances
+        run: uv sync
+
+      - name: run pytest
+        run: uv run pytest --cov=app --cov-report=term --cov-report=xml
+
+
