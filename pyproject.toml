@@ -16,4 +16,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "diagrams>=0.24.4",
+    "ruff",
+    "mypy",
+    "pytest"
 ]
