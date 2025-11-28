@@ -102,7 +102,8 @@
 - [ ] ✅ Branches `main` et `develop` créées
 - [ ] ✅ Protection de branches configurée sur GitHub
 - [ ] ✅ Au moins 1 PR créée avec Conventional Commit
-- [ ] Vous comprenez le workflow GitFlow
+- [ ] ✅ Vous comprenez le workflow GitFlow
 
 
 ## 🧪 Phase 3 : CI Pipeline - Tests, Quality & Security
+
