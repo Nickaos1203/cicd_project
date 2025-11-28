@@ -36,7 +36,7 @@
 ### routes/items.py
 - **Formatage** :
 - **sécurité** :
-- **imports** : import "ItemCreate", "List" non utilisés. "import datetime" non-utilisé. "from app.schemas.item import ItemCreate" non utilisé.
+- **imports** : "List" non utilisés. "import datetime" non-utilisé. "from app.schemas.item import ItemCreate" non utilisé.
 - **Types** :
 - **Documentation** : docstrings manquantes pour les fonctions "get_item", "create_item", "update_item", "delete_item" ;
 - **Codes morts** :  La variable "MAX_ITEMS_PER_PAGE" non-utilisée. La fonction "_old_helper_function" n'est pas utilisée.
@@ -46,8 +46,8 @@
 - **sécurité** :
 - **imports** : "from typing import Optional" non utilisé.
 - **Types** :
-- **Documentation** :
-- **Codes morts** : "class ItemCreate" inutile. 
+- **Documentation** : docstrings des classes manquentes.
+- **Codes morts** :
 
 ### services/items.py
 - **Formatage** :
@@ -107,3 +107,26 @@
 
 ## 🧪 Phase 3 : CI Pipeline - Tests, Quality & Security
 
+### ❓ Questions de réflexion
+
+1. **Pourquoi plusieurs jobs séparés ?**
+   - Avantages du parallélisme
+   - Facilité de déboggage
+
+2. **Que faire si la CI échoue ?**
+   - Comment lire les logs ?
+   - Comment reproduire localement ?
+
+3. **Faut-il tout corriger d'un coup ?**
+   - Avantages des petites PR
+   - Facilité de review
+
+
+### ✅ Validation Phase 3
+
+- [ ] ✅ Workflow `.github/workflows/ci.yml` créé
+- [ ] ✅ Tous les jobs (lint, typecheck, security, tests) fonctionnent
+- [ ] ✅ La CI s'exécute automatiquement sur chaque push/PR
+- [ ] ✅ Au moins 50% des problèmes détectés sont corrigés
+- [ ] ✅ Les tests passent
+- [ ] ✅ Configuration ruff, mypy, pytest dans `pyproject.toml`

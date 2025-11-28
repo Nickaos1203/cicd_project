@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main,develop]
+    branches: [main, develop]
   pull_request:
     branches: [main, develop]
 
@@ -10,12 +10,18 @@ jobs:
   lint:
     name: Lint & Format
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12", "3.13"]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Installer uv
-        run: pip install uv
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
 
       - name: Installer ruff
         run: uv pip install ruff
@@ -32,12 +38,18 @@ jobs:
   typecheck:
     name: Vérification des types
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12", "3.13"]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Installer uv
-        run: pip install uv
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
 
       - name: Installer mypy
         run: uv pip install mypy
@@ -51,18 +63,21 @@ jobs:
   security:
     name: Security Scan
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12", "3.13"]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Installer uv
-        run: pip install uv
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
 
-      - name: Installer Bandit
-        run: uv pip install bandit
-      
-      - name: Installer Safety
-        run: uv pip install safety
+      - name: Installer Bandit et Safety
+        run: uv pip install bandit safety
 
       - name: Installer les dépendances
         run: uv sync
@@ -70,11 +85,15 @@ jobs:
       - name: Bandit (static analysis)
         run: uv run bandit -r app/
 
-      - name: Safety (check dependencies vulnerabilities)
+      - name: Safety (check dependency vulnerabilities)
         run: uv run safety check
   
   tests:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12", "3.13"]
+
     services:
       postgres:
         image: postgres:15
@@ -84,25 +103,26 @@ jobs:
         ports:
           - 5432:5432
         options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          --health-cmd="pg_isready"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Installer uv
-        run: pip install uv
-
-      - name: installation de pytest
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+        
+      - name: Installer pytest
         run: uv pip install pytest
 
-      - name: installation des dépendances
+      - name: Installer les dépendances
         run: uv sync
 
-      - name: run pytest
+      - name: Exécuter les tests
         run: uv run pytest --cov=app --cov-report=term --cov-report=xml
-
-
